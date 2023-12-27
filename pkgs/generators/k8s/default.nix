@@ -399,9 +399,15 @@ with lib; let
             else
               # generate merge key for list elements if it's not present
               "__kubenix_list_merge_key_" + (concatStringsSep "" (map (key:
-                if isAttrs value.''${key}
-                then toString value.''${key}.content
-                else (toString value.''${key})
+                if hasAttr key value
+                then
+                  if isAttrs value.''${key}
+                  then toString value.''${key}.content
+                  else (toString value.''${key})
+                else
+                # if the key is not present
+                # TODO what is correct here?
+                  ""
               ) listMergeKeys))
           ) (value // { _priority = i; }))
         values);
